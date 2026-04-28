@@ -52,19 +52,20 @@ def fit():
 
         popt, pcov = curve_fit(wrapper, x, y, p0=initial_guess, maxfev=10000)
         perr = np.sqrt(np.diag(pcov))
-
+        
         x_fit = np.linspace(min(x), max(x), 500)
         y_fit = wrapper(x_fit, *popt)
-
+        
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=x, y=y, mode='markers', name='Data'))
         fig.add_trace(go.Scatter(x=x_fit, y=y_fit, mode='lines', name='Fit'))
-
-        graphJSON = fig.to_dict()
-
+        
         return jsonify({
-            "parameters": [...],
-            "graph": graphJSON
+            "parameters": [
+                {"name": name, "value": float(val), "uncertainty": float(err)}
+                for name, val, err in zip(param_names, popt, perr)
+            ],
+            "graph": fig.to_dict()
         })
 
     except Exception as e:
