@@ -9,23 +9,25 @@ function sendData() {
         body: JSON.stringify({
             x: x,
             y: y,
-            model: document.getElementById("model").value,
-            title: document.getElementById("title").value,
-            xlabel: document.getElementById("xlabel").value,
-            ylabel: document.getElementById("ylabel").value
+            model: document.getElementById("model").value
         })
     })
     .then(response => response.json())
     .then(data => {
 
+        if (data.error) {
+            alert("Error: " + data.error);
+            return;
+        }
+    
         let resultsDiv = document.getElementById("results");
         resultsDiv.innerHTML = "";
-
+    
         data.parameters.forEach(p => {
             resultsDiv.innerHTML += 
                 `${p.name} = ${p.value.toFixed(5)} ± ${p.uncertainty.toFixed(5)}<br>`;
         });
-
+    
         let graph = JSON.parse(data.graph);
         Plotly.newPlot("plot", graph.data, graph.layout);
     });

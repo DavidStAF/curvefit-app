@@ -19,44 +19,44 @@ def index():
 
 @app.route("/fit", methods=["POST"])
 def fit():
-    data = request.json
-    x = np.array(data["x"], dtype=float)
-    y = np.array(data["y"], dtype=float)
-    expr = data["model"]
+    try:
+        data = request.json
 
-    func, param_names = parse_function(expr)
+        x = np.array(data["x"], dtype=float)
+        y = np.array(data["y"], dtype=float)
 
-    def wrapper(x, *params):
-        return func(x, *params)
+        if len(x) != len(y):
+            return jsonify({"error": "x and y must have same length"}), 400
 
-    popt, pcov = curve_fit(wrapper, x, y)
-    perr = np.sqrt(np.diag(pcov))
+        expr_string = data["model"]
 
-    x_fit = np.linspace(min(x), max(x), 500)
-    y_fit = wrapper(x_fit, *popt)
+        func, param_names = parse_function(expr_string)
 
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=x, y=y, mode='markers', name='Data'))
-    fig.add_trace(go.Scatter(x=x_fit, y=y_fit, mode='lines', name='Fit'))
+        def wrapper(x, *params):
+            return func(x, *params)
 
-    fig.update_layout(
-        title=data.get("title", "Curve Fit"),
-        xaxis_title=data.get("xlabel", "x"),
-        yaxis_title=data.get("ylabel", "y"),
-        template="plotly_white"
-    )
+        popt, pcov = curve_fit(wrapper, x, y, maxfev=10000)
+        perr = np.sqrt(np.diag(pcov))
 
-    graphJSON = pio.to_json(fig)
+        x_fit = np.linspace(min(x), max(x), 500)
+        y_fit = wrapper(x_fit, *popt)
 
-    results = {
-        "parameters": [
-            {"name": name, "value": float(val), "uncertainty": float(err)}
-            for name, val, err in zip(param_names, popt, perr)
-        ],
-        "graph": graphJSON
-    }
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=x, y=y, mode='markers', name='Data'))
+        fig.add_trace(go.Scatter(x=x_fit, y=y_fit, mode='lines', name='Fit'))
 
-    return jsonify(results)
+        graphJSON = pio.to_json(fig)
+
+        return jsonify({
+            "parameters": [
+                {"name": name, "value": float(val), "uncertainty": float(err)}
+                for name, val, err in zip(param_names, popt, perr)
+            ],
+            "graph": graphJSON
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 if __name__ == "__main__":
     app.run()
