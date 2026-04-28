@@ -45,4 +45,6 @@ function sendData() {
             data.graph.layout
         );
     });
+    console.log("Trace 1:", data.graph.data[0]);
+    console.log("Trace 2:", data.graph.data[1]);
 }
