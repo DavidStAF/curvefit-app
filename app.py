@@ -59,6 +59,7 @@ def fit():
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=x, y=y, mode='markers', name='Data'))
         fig.add_trace(go.Scatter(x=x_fit, y=y_fit, mode='lines', name='Fit'))
+        fig.update_layout(title="Curve Fit", xaxis_title="X", yaxis_title="Y", template="plotly_white")
         
         return jsonify({
             "parameters": [

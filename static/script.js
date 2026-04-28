@@ -28,6 +28,6 @@ function sendData() {
                 `${p.name} = ${p.value.toFixed(5)} ± ${p.uncertainty.toFixed(5)}<br>`;
         });
     
-        Plotly.newPlot("plot", data.graph.data, data.graph.layout);
+        Plotly.newPlot("plot", data.graph.data, data.graph.layout || {});
     });
 }
