@@ -28,7 +28,6 @@ function sendData() {
                 `${p.name} = ${p.value.toFixed(5)} ± ${p.uncertainty.toFixed(5)}<br>`;
         });
     
-        let graph = JSON.parse(data.graph);
-        Plotly.newPlot("plot", graph.data, graph.layout);
+        Plotly.newPlot("plot", data.graph.data, data.graph.layout);
     });
 }

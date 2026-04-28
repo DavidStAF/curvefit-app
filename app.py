@@ -60,13 +60,10 @@ def fit():
         fig.add_trace(go.Scatter(x=x, y=y, mode='markers', name='Data'))
         fig.add_trace(go.Scatter(x=x_fit, y=y_fit, mode='lines', name='Fit'))
 
-        graphJSON = pio.to_json(fig)
+        graphJSON = fig.to_dict()
 
         return jsonify({
-            "parameters": [
-                {"name": name, "value": float(val), "uncertainty": float(err)}
-                for name, val, err in zip(param_names, popt, perr)
-            ],
+            "parameters": [...],
             "graph": graphJSON
         })
 
