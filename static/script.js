@@ -10,25 +10,26 @@ function sendData() {
     console.log("X:", x);
     console.log("Y:", y);
     fetch("/fit", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-        x: x,
-        y: y,
-        model: document.getElementById("model").value,
-        title: document.getElementById("title").value,
-        xlabel: document.getElementById("xlabel").value,
-        ylabel: document.getElementById("ylabel").value
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            x: x,
+            y: y,
+            model: document.getElementById("model").value,
+            title: document.getElementById("title").value,
+            xlabel: document.getElementById("xlabel").value,
+            ylabel: document.getElementById("ylabel").value
+        })
     })
-})
     .then(response => response.json())
     .then(data => {
-
+    
         if (data.error) {
             alert("Error: " + data.error);
             return;
         }
     
+        // Affichage paramètres
         let resultsDiv = document.getElementById("results");
         resultsDiv.innerHTML = "";
     
@@ -37,6 +38,11 @@ function sendData() {
                 `${p.name} = ${p.value.toFixed(5)} ± ${p.uncertainty.toFixed(5)}<br>`;
         });
     
-        Plotly.newPlot("plot", graph.data, graph.layout);
+        // 👇 IMPORTANT : utiliser data.graph directement
+        Plotly.newPlot(
+            "plot",
+            data.graph.data,
+            data.graph.layout
+        );
     });
 }
