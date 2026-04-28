@@ -24,18 +24,33 @@ def fit():
 
         x = np.array(data["x"], dtype=float)
         y = np.array(data["y"], dtype=float)
-
-        if len(x) != len(y):
-            return jsonify({"error": "x and y must have same length"}), 400
-
         expr_string = data["model"]
 
-        func, param_names = parse_function(expr_string)
+        x_sym = sp.symbols('x')
+        expr = sp.sympify(expr_string)
 
-        def wrapper(x, *params):
-            return func(x, *params)
+        # 🔥 EXTRACTION DES PARAMÈTRES (TRÈS IMPORTANT)
+        params = sorted(
+            list(expr.free_symbols - {x_sym}),
+            key=lambda s: s.name
+        )
 
-        popt, pcov = curve_fit(wrapper, x, y, maxfev=10000)
+        param_names = [str(p) for p in params]
+
+        # 👉 SI aucun paramètre trouvé → erreur claire
+        if len(params) == 0:
+            return jsonify({"error": "No parameters found in model (use a, b, c, ... variables)"}), 400
+
+        # fonction numpy
+        func = sp.lambdify((x_sym, *params), expr, "numpy")
+
+        def wrapper(x, *p):
+            return func(x, *p)
+
+        # 🔥 IMPORTANT : initial guess (évite erreur SciPy)
+        initial_guess = np.ones(len(params))
+
+        popt, pcov = curve_fit(wrapper, x, y, p0=initial_guess, maxfev=10000)
         perr = np.sqrt(np.diag(pcov))
 
         x_fit = np.linspace(min(x), max(x), 500)
@@ -57,6 +72,6 @@ def fit():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-
+    
 if __name__ == "__main__":
     app.run()
