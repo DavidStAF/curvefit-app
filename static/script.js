@@ -7,7 +7,8 @@ function sendData() {
     let y = document.getElementById("ydata").value
             .split(/[\s,]+/)
             .map(v => parseFloat(v.trim()));
-
+    console.log("X:", x);
+    console.log("Y:", y);
     fetch("/fit", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -36,7 +37,6 @@ function sendData() {
                 `${p.name} = ${p.value.toFixed(5)} ± ${p.uncertainty.toFixed(5)}<br>`;
         });
     
-        let graph = JSON.parse(data.graph);
         Plotly.newPlot("plot", graph.data, graph.layout);
     });
 }

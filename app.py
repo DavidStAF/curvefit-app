@@ -71,7 +71,7 @@ def fit():
                 {"name": name, "value": float(val), "uncertainty": float(err)}
                 for name, val, err in zip(param_names, popt, perr)
             ],
-            "graph": fig.to_dict()
+            "graph": fig.to_plotly_json()
         })
 
     except Exception as e:
