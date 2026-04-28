@@ -22,10 +22,15 @@ def fit():
     try:
         data = request.json
 
+        title = data.get("title", "Curve Fit")
+        xlabel = data.get("xlabel", "X")
+        ylabel = data.get("ylabel", "Y")
+        
         x = np.array(data["x"], dtype=float)
         y = np.array(data["y"], dtype=float)
         expr_string = data["model"]
 
+    
         x_sym = sp.symbols('x')
         expr = sp.sympify(expr_string)
 
@@ -59,7 +64,7 @@ def fit():
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=x, y=y, mode='markers', name='Data'))
         fig.add_trace(go.Scatter(x=x_fit, y=y_fit, mode='lines', name='Fit'))
-        fig.update_layout(title="Curve Fit", xaxis_title="X", yaxis_title="Y", template="plotly_white")
+        fig.update_layout(title=title,xaxis_title=xlabel,yaxis_title=ylabel,template="plotly_white")
         
         return jsonify({
             "parameters": [
