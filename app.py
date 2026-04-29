@@ -59,8 +59,8 @@ def fit():
         y_fit = wrapper(x_fit, *popt)
        
         fig = go.Figure()
-        fig.add_trace(go.Scatter(x=x, y=y, mode='markers', name='Data'))
-        fig.add_trace(go.Scatter(x=x_fit, y=y_fit, mode='lines', name='Fit'))
+        fig.add_trace(go.Scatter(x=x.tolist(),y=y.tolist(),mode='markers',name='Data'))
+        fig.add_trace(go.Scatter(x=x_fit.tolist(),y=y_fit.tolist(),mode='lines',name='Fit'))
         fig.update_layout(title=title,xaxis_title=xlabel,yaxis_title=ylabel,template="plotly_white")
         
         return jsonify({
