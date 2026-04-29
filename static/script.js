@@ -8,7 +8,7 @@ function sendData() {
                 .split(/[\s,]+/)
                 .map(v => parseFloat(v.trim()));
 
-    fetch("/Calculer", {
+    fetch("/fit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
