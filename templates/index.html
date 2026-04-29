@@ -1,34 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Curve Fitting App</title>
+    <title>Physique CCML</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
 
-<h2>Curve Fitting Tool</h2>
+<h2>Modélisation de données</h2>
 
-<label>X values (comma separated):</label><br>
+<label>Valeurs de l'axe horizontal:</label><br>
 <input id="xdata" size="60"><br><br>
 
-<label>Y values (comma separated):</label><br>
+<label>Valeurs de l'axe vertical:</label><br>
 <input id="ydata" size="60"><br><br>
 
-<label>Model (example: a*x**2 + b):</label><br>
+<label>Équation de la courbe de tendance (exemple: a*x**2 + b):</label><br>
 <input id="model" size="60"><br><br>
 
-<label>Title:</label><br>
-<input id="title"><br>
-
-<label>X label:</label><br>
+<label>Titre de l'axe horizontal:</label><br>
 <input id="xlabel"><br>
 
-<label>Y label:</label><br>
+<label>Titre de l'axe vertical:</label><br>
 <input id="ylabel"><br><br>
 
-<button onclick="sendData()">Fit</button>
+<button onclick="sendData()">Calculer</button>
 
-<h3>Results:</h3>
+<h3>Résultats:</h3>
 <div id="results"></div>
 
 <div id="plot"></div>
