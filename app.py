@@ -22,7 +22,6 @@ def fit():
     try:
         data = request.json
 
-        title = data.get("title", "Curve Fit")
         xlabel = data.get("xlabel", "X")
         ylabel = data.get("ylabel", "Y")
         
@@ -61,7 +60,7 @@ def fit():
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=x.tolist(),y=y.tolist(),mode='markers',name='Data'))
         fig.add_trace(go.Scatter(x=x_fit.tolist(),y=y_fit.tolist(),mode='lines',name='Fit'))
-        fig.update_layout(title=title,xaxis_title=xlabel,yaxis_title=ylabel,template="plotly_white")
+        fig.update_layout(xaxis_title=xlabel,yaxis_title=ylabel,template="plotly_white")
         
         return jsonify({
             "parameters": [
