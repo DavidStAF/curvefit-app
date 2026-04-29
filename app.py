@@ -29,38 +29,35 @@ def fit():
         x = np.array(data["x"], dtype=float)
         y = np.array(data["y"], dtype=float)
         expr_string = data["model"]
-
-    
+        expr_string = expr_string.replace("^", "**")
+        
         x_sym = sp.symbols('x')
         expr = sp.sympify(expr_string)
-
-        # 🔥 EXTRACTION DES PARAMÈTRES (TRÈS IMPORTANT)
+        
         params = sorted(
             list(expr.free_symbols - {x_sym}),
             key=lambda s: s.name
         )
-
+        
         param_names = [str(p) for p in params]
-
-        # 👉 SI aucun paramètre trouvé → erreur claire
-        if len(params) == 0:
-            return jsonify({"error": "No parameters found in model (use a, b, c, ... variables)"}), 400
-
-        # fonction numpy
+        
         func = sp.lambdify((x_sym, *params), expr, "numpy")
 
+            # 👉 SI aucun paramètre trouvé → erreur claire
+        if len(params) == 0:
+            return jsonify({"error": "No parameters found in model (use a, b, c, ... variables)"}), 400
+        
         def wrapper(x, *p):
-            return func(x, *p)
-
-        # 🔥 IMPORTANT : initial guess (évite erreur SciPy)
+            return np.array(func(x, *p), dtype=float)
+        
         initial_guess = np.ones(len(params))
-
+        
         popt, pcov = curve_fit(wrapper, x, y, p0=initial_guess, maxfev=10000)
         perr = np.sqrt(np.diag(pcov))
         
         x_fit = np.linspace(min(x), max(x), 500)
         y_fit = wrapper(x_fit, *popt)
-        
+       
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=x, y=y, mode='markers', name='Data'))
         fig.add_trace(go.Scatter(x=x_fit, y=y_fit, mode='lines', name='Fit'))
