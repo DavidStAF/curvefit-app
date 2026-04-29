@@ -1,14 +1,13 @@
 function sendData() {
 
     let x = document.getElementById("xdata").value
-            .split(/[\s,]+/)
-            .map(v => parseFloat(v.trim()));
+                .split(/[\s,]+/)
+                .map(v => parseFloat(v.trim()));
 
     let y = document.getElementById("ydata").value
-            .split(/[\s,]+/)
-            .map(v => parseFloat(v.trim()));
-    console.log("X:", x);
-    console.log("Y:", y);
+                .split(/[\s,]+/)
+                .map(v => parseFloat(v.trim()));
+
     fetch("/fit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -23,28 +22,33 @@ function sendData() {
     })
     .then(response => response.json())
     .then(data => {
-    
+
         if (data.error) {
             alert("Error: " + data.error);
             return;
         }
-    
+
+        // DEBUG (doit être ici, PAS ailleurs)
+        console.log("Graph object:", data.graph);
+
         // Affichage paramètres
         let resultsDiv = document.getElementById("results");
         resultsDiv.innerHTML = "";
-    
+
         data.parameters.forEach(p => {
             resultsDiv.innerHTML += 
                 `${p.name} = ${p.value.toFixed(5)} ± ${p.uncertainty.toFixed(5)}<br>`;
         });
-    
-        // 👇 IMPORTANT : utiliser data.graph directement
+
+        // Affichage graphique
         Plotly.newPlot(
             "plot",
             data.graph.data,
             data.graph.layout
         );
+
+    })
+    .catch(error => {
+        console.error("Fetch error:", error);
     });
-    console.log("Trace 1:", data.graph.data[0]);
-    console.log("Trace 2:", data.graph.data[1]);
 }
